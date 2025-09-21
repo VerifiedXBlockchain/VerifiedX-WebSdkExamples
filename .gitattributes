@@ -1,1 +1,9 @@
-vfx-svelte-example/* linguist-vendored
+# Treat Svelte files as TypeScript for language detection
+*.svelte linguist-language=TypeScript
+
+# Alternatively, you could exclude Svelte files from language detection:
+# *.svelte linguist-detectable=false
+
+# Make sure TypeScript files are properly detected
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript

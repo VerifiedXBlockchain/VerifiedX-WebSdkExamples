@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { VfxClient, Network } from 'vfx-web-sdk';
+import { VfxClient, Network, Keypair } from 'vfx-web-sdk';
 import SendCoinForm from './components/SendCoinForm';
 import BalanceDisplay from './components/BalanceDisplay';
 
 function App() {
 
   const [accountExists, setAccountExists] = useState(false);
-  const [mnemonic, setMnemonic] = useState(null);
-  const [keypair, setKeypair] = useState(null);
+  const [mnemonic, setMnemonic] = useState<string | null>(null);
+  const [keypair, setKeypair] = useState<Keypair | null>(null);
 
   const client = new VfxClient(Network.Testnet);
 
-  const setDetailsFromPrivateKey = (privateKey) => {
+  const setDetailsFromPrivateKey = (privateKey: string) => {
 
     const publicKey = client.publicFromPrivate(privateKey);
     const address = client.addressFromPrivate(privateKey);
@@ -43,7 +43,7 @@ function App() {
 
     } catch (error) {
       console.error('Error with VfxClient:', error);
-      console.error('Error stack:', error.stack);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'Unknown error');
     }
   };
 
@@ -57,7 +57,7 @@ function App() {
 
     } catch (error) {
       console.error('Error with VfxClient:', error);
-      console.error('Error stack:', error.stack);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'Unknown error');
     }
   }
 
@@ -66,14 +66,13 @@ function App() {
 
       const phrase = prompt("Import Recovery Phrase")?.trim();
       if (phrase) {
-
         const pKey = client.privateKeyFromMneumonic(phrase, 0);
         setDetailsFromPrivateKey(pKey)
         setMnemonic(phrase)
       }
     } catch (error) {
       console.error('Error with VfxClient:', error);
-      console.error('Error stack:', error.stack);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'Unknown error');
     }
   }
 
@@ -129,8 +128,8 @@ function App() {
       {keypair?.publicKey && <><label>Your Public Key: </label><pre>{keypair.publicKey}</pre></>}
       {mnemonic && <><label>Your Recovery Phrase: </label><pre>{mnemonic}</pre></>}
 
-      {accountExists &&
-        <BalanceDisplay client={client} address={keypair?.address} />
+      {accountExists && keypair?.address &&
+        <BalanceDisplay client={client} address={keypair.address} />
       }
 
       {keypair &&

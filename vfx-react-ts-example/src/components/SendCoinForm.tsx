@@ -1,26 +1,20 @@
 
 
-
 import { useState } from 'react';
+import { VfxClient, Keypair } from 'vfx-web-sdk';
 
-/**
- * @typedef {import('vfx-web-sdk').VfxClient} VfxClient
- * @typedef {import('vfx-web-sdk').Keypair} Keypair
- */
+interface SendCoinFormProps {
+  client: VfxClient;
+  keypair: Keypair;
+}
 
-/**
- * Send coin form component
- * @param {Object} props
- * @param {VfxClient} props.client - VFX client instance
- * @param {Keypair} props.keypair - Keypair for signing transactions
- */
-function SendCoinForm({ client, keypair }) {
+function SendCoinForm({ client, keypair }: SendCoinFormProps) {
   const [toAddress, setToAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!toAddress || !amount) {
@@ -44,7 +38,7 @@ function SendCoinForm({ client, keypair }) {
       setToAddress('');
       setAmount('');
     } catch (error) {
-      setStatus(`Error: ${error.message}`);
+      setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }

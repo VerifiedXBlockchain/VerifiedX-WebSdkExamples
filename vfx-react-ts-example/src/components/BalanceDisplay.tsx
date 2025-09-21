@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react';
+import { VfxClient } from 'vfx-web-sdk';
 
-/**
- * @typedef {import('vfx-web-sdk').VfxClient} VfxClient
- */
+interface BalanceDisplayProps {
+  client: VfxClient;
+  address: string;
+}
 
-/**
- * Balance display component that shows account balance and auto-refreshes
- * @param {Object} props
- * @param {VfxClient} props.client - VFX client instance
- * @param {string} props.address - Account address to check balance for
- */
-function BalanceDisplay({ client, address }) {
-  const [balance, setBalance] = useState(null);
+function BalanceDisplay({ client, address }: BalanceDisplayProps) {
+  const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchBalance = async () => {
     if (!client || !address) return;
@@ -25,9 +21,11 @@ function BalanceDisplay({ client, address }) {
 
       const account = await client.getAddressDetails(address);
 
-      setBalance(account.balance);
+      if (account) {
+        setBalance(account.balance);
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -35,7 +33,6 @@ function BalanceDisplay({ client, address }) {
 
   useEffect(() => {
     fetchBalance();
-
 
     const interval = setInterval(fetchBalance, 30000);
 

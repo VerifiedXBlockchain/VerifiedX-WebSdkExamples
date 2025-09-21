@@ -26,11 +26,7 @@ function SendCoinForm({ client, keypair }: SendCoinFormProps) {
     setStatus('Sending transaction...');
 
     try {
-      // This is where you would use your VFX SDK to send the coin
-      // Example: const txHash = await client.sendCoin(privateKey, toAddress, amount);
 
-      // For now, just simulate the process
-      await new Promise(resolve => setTimeout(resolve, 2000));
 
       const hash = await client.sendCoin(keypair, toAddress, Number(amount));
 

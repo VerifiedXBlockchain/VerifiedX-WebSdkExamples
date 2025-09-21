@@ -2,6 +2,18 @@
 	import { VfxClient, Network, type Keypair } from 'vfx-web-sdk';
 	import SendCoinForm from '$lib/components/SendCoinForm.svelte';
 	import BalanceDisplay from '$lib/components/BalanceDisplay.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardFooter,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Separator } from '$lib/components/ui/separator';
+	import { Wallet, Key, Download, LogOut, Sparkles } from 'lucide-svelte';
 
 	let accountExists = $state(false);
 	let mnemonic = $state<string | null>(null);
@@ -16,14 +28,14 @@
 		keypair = {
 			privateKey: privateKey,
 			publicKey: publicKey,
-			address: address,
+			address: address
 		};
 
 		accountExists = true;
 	}
 
 	function handleImportPrivateKey() {
-		const pkey = prompt("Private Key")?.trim();
+		const pkey = prompt('Private Key')?.trim();
 		if (pkey) {
 			setDetailsFromPrivateKey(pkey);
 		}
@@ -53,7 +65,7 @@
 
 	function restoreHdWallet() {
 		try {
-			const phrase = prompt("Import Recovery Phrase")?.trim();
+			const phrase = prompt('Import Recovery Phrase')?.trim();
 			if (phrase) {
 				const pKey = client.privateKeyFromMneumonic(phrase, 0);
 				setDetailsFromPrivateKey(pKey);
@@ -72,113 +84,158 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gray-900 text-white">
-	<div class="container mx-auto px-6 py-8">
-		<div class="max-w-4xl mx-auto">
+<div class="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+	<div class="container mx-auto px-4 py-8">
+		<div class="mx-auto max-w-6xl">
 			<!-- Header -->
-			<div class="text-center mb-12">
-				<h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-					VFX Web SDK Browser Test
-				</h1>
-				<p class="text-gray-400 text-lg">
-					This example uses the browser-optimized build with no webpack configuration needed!
+			<div class="mb-12 text-center">
+				<div class="mb-4 flex items-center justify-center gap-3">
+					<h1
+						class="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-5xl font-bold text-transparent"
+					>
+						VFX Wallet
+					</h1>
+				</div>
+				<p class="mx-auto max-w-2xl text-lg text-slate-400">
+					Cryptocurrency wallet interface powered by the VFX Web SDK. Manage your digital assets
+					with enterprise-grade security.
 				</p>
+				<Badge variant="secondary" class="mt-4">Testnet Environment</Badge>
 			</div>
 
 			<!-- Account Actions -->
 			{#if !accountExists}
-				<div class="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-2xl p-8 mb-8">
-					<h2 class="text-2xl font-semibold mb-6 text-center">Get Started</h2>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<button
-							onclick={handleGenerateAccount}
-							class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
-						>
-							Generate Private Key
-						</button>
-						<button
-							onclick={handleImportPrivateKey}
-							class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg"
-						>
-							Import Private Key
-						</button>
-						<button
-							onclick={handleGenerateHdWallet}
-							class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25"
-						>
-							Generate HD Wallet
-						</button>
-						<button
-							onclick={restoreHdWallet}
-							class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
-						>
-							Restore HD Wallet
-						</button>
-					</div>
-				</div>
+				<Card class="mb-8 border-slate-800 bg-slate-950/50 backdrop-blur">
+					<CardHeader class="text-center">
+						<CardTitle class="text-2xl text-slate-100">Welcome to VFX Wallet</CardTitle>
+						<CardDescription class="text-slate-400">
+							Choose how you'd like to get started with your wallet
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+							<Button
+								onclick={handleGenerateAccount}
+								variant="outline"
+								size="lg"
+								class="h-16 flex-col gap-2"
+							>
+								<Key class="h-5 w-5" />
+								Generate Private Key
+							</Button>
+							<Button
+								onclick={handleImportPrivateKey}
+								variant="outline"
+								size="lg"
+								class="h-16 flex-col gap-2"
+							>
+								<Download class="h-5 w-5" />
+								Import Private Key
+							</Button>
+							<Button
+								onclick={handleGenerateHdWallet}
+								variant="secondary"
+								size="lg"
+								class="h-16 flex-col gap-2"
+							>
+								<Wallet class="h-5 w-5" />
+								Generate HD Wallet
+							</Button>
+							<Button
+								onclick={restoreHdWallet}
+								variant="outline"
+								size="lg"
+								class="h-16 flex-col gap-2"
+							>
+								<Download class="h-5 w-5" />
+								Restore HD Wallet
+							</Button>
+						</div>
+					</CardContent>
+				</Card>
 			{/if}
 
 			{#if accountExists}
-				<div class="text-center mb-8">
-					<button
-						onclick={handleLogout}
-						class="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-red-500/25"
-					>
+				<div class="mb-8 flex justify-center">
+					<Button onclick={handleLogout} variant="destructive" size="lg" class="gap-2">
+						<LogOut class="h-4 w-4" />
 						Logout
-					</button>
+					</Button>
 				</div>
 			{/if}
 
 			<!-- Account Details -->
 			{#if keypair}
-				<div class="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-2xl p-8 mb-8">
-					<h2 class="text-2xl font-semibold mb-6">Account Details</h2>
-					<div class="space-y-6">
+				<Card class="mb-8 border-slate-800 bg-slate-950/50 backdrop-blur">
+					<CardHeader>
+						<CardTitle class="flex items-center gap-2 text-slate-100">
+							<Wallet class="h-5 w-5" />
+							Account Details
+						</CardTitle>
+						<CardDescription class="text-slate-400">
+							Your wallet credentials and account information
+						</CardDescription>
+					</CardHeader>
+					<CardContent class="space-y-6">
 						{#if keypair.address}
-							<div>
-								<label class="block text-sm font-medium text-gray-300 mb-2">Your Address:</label>
-								<div class="bg-gray-900 border border-gray-600 rounded-xl p-4 font-mono text-sm break-all">
+							<div class="space-y-2">
+								<label class="text-sm font-medium text-slate-300">Wallet Address</label>
+								<div
+									class="break-all rounded-lg border border-slate-700 bg-slate-900/50 p-4 font-mono text-sm text-slate-200"
+								>
 									{keypair.address}
 								</div>
 							</div>
 						{/if}
 						{#if keypair.privateKey}
-							<div>
-								<label class="block text-sm font-medium text-gray-300 mb-2">Your Private Key:</label>
-								<div class="bg-gray-900 border border-gray-600 rounded-xl p-4 font-mono text-sm break-all">
+							<div class="space-y-2">
+								<label class="text-sm font-medium text-slate-300">Private Key</label>
+								<div
+									class="break-all rounded-lg border border-slate-700 bg-slate-900/50 p-4 font-mono text-sm text-slate-200"
+								>
 									{keypair.privateKey}
 								</div>
 							</div>
 						{/if}
 						{#if keypair.publicKey}
-							<div>
-								<label class="block text-sm font-medium text-gray-300 mb-2">Your Public Key:</label>
-								<div class="bg-gray-900 border border-gray-600 rounded-xl p-4 font-mono text-sm break-all">
+							<div class="space-y-2">
+								<label class="text-sm font-medium text-slate-300">Public Key</label>
+								<div
+									class="break-all rounded-lg border border-slate-700 bg-slate-900/50 p-4 font-mono text-sm text-slate-200"
+								>
 									{keypair.publicKey}
 								</div>
 							</div>
 						{/if}
 						{#if mnemonic}
-							<div>
-								<label class="block text-sm font-medium text-gray-300 mb-2">Your Recovery Phrase:</label>
-								<div class="bg-gray-900 border border-gray-600 rounded-xl p-4 font-mono text-sm break-all">
+							<Separator class="bg-slate-700" />
+							<div class="space-y-2">
+								<label class="text-sm font-medium text-slate-300">Recovery Phrase</label>
+								<div
+									class="break-all rounded-lg border border-amber-800/50 bg-amber-950/20 p-4 font-mono text-sm text-amber-200"
+								>
 									{mnemonic}
 								</div>
+								<p class="text-xs text-amber-400/80">
+									⚠️ Keep this phrase safe and never share it with anyone
+								</p>
 							</div>
 						{/if}
-					</div>
-				</div>
+					</CardContent>
+				</Card>
 			{/if}
 
-			<!-- Balance Display -->
-			{#if accountExists && keypair?.address}
-				<BalanceDisplay {client} address={keypair.address} />
-			{/if}
+			<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+				<!-- Balance Display -->
+				{#if accountExists && keypair?.address}
+					<BalanceDisplay {client} address={keypair.address} />
+				{/if}
 
-			<!-- Send Coin Form -->
-			{#if keypair}
-				<SendCoinForm {client} {keypair} />
-			{/if}
+				<!-- Send Coin Form -->
+				{#if keypair}
+					<SendCoinForm {client} {keypair} />
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
